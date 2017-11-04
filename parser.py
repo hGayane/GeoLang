@@ -1,5 +1,6 @@
 from geolang import *
 import re
+import codecs
 
 class GlobalData:
      lineKW = "գիծ"
@@ -8,31 +9,32 @@ class GlobalData:
      segmentKW = "աղեղ"
      rectangleKW = "քառանկյուն"
      #regular expressions
-     pointRE = '^կետ\s+\d\s\d\s*$'
+     pointRE = '^կետ\s+\d+\s\d+\s*$'
      simpleRE="\d"
      
 
 class Parser:
-    def __init__(self,prog):
-        self.prog = prog
-        self.exec = Program()
+    def __init__(self, file):
+        self.file = file
     def parse(self):
-         l = self.prog
-         shapes = []
          re.compile(GlobalData.pointRE)
-         m = re.match(GlobalData.pointRE,l)
-         if(m is not None):
-             words = l.split()
-             x = words[1]
-             y = words[2]
-             p = Point(int(x),int(y))
-             shapes.append(p)
+         shapes = []
+         f = codecs.open(self.file,encoding='utf-8  ')
+         for l in f:
+             line = l.rstrip()
+             m = re.match(GlobalData.pointRE,line)
+             if(m is not None):
+                 words = line.split()
+                 x = words[1]
+                 y = words[2]
+                 p = Point(int(x),int(y))
+                 shapes.append(p)
          return shapes
 
 def main():
     print("in main method")
-    prog = "կետ 1 2"
-    p = Parser(prog)
+    file = "point.gl"
+    p = Parser(file)
     shapes = p.parse()
     prog = Program()
     prog.execute(shapes)
